@@ -10,4 +10,7 @@ func Routes(api *http.ServeMux) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
+	api.Handle("/healthz", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
 }
