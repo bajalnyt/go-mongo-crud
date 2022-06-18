@@ -16,7 +16,7 @@ func InitDatabase() (*mongo.Client, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
 
 	if err != nil {
-		return nil, fmt.Errorf("parsing digital offer: %w", err)
+		return nil, fmt.Errorf("error initializing mongo: %w", err)
 	}
 
 	return client, nil

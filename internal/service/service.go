@@ -72,7 +72,7 @@ func (s *Service) Run() error {
 	serverErrors := make(chan error, 1)
 
 	go func() {
-		fmt.Printf("api started - host: %s", s.server.Addr)
+		fmt.Printf("api started - host: http://localhost%s", s.server.Addr)
 		serverErrors <- s.server.ListenAndServe()
 	}()
 
