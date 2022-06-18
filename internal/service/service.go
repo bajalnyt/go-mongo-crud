@@ -9,7 +9,9 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bajalnyt/go-mongo-crud/internal/db"
 	"github.com/gobuffalo/logger"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type config struct {
@@ -19,9 +21,10 @@ type config struct {
 }
 
 type Service struct {
-	config config
-	server *http.Server
-	logger logger.Logger
+	config      config
+	server      *http.Server
+	mongoClient *mongo.Client
+	logger      logger.Logger
 }
 
 func New() (*Service, error) {
@@ -39,10 +42,21 @@ func New() (*Service, error) {
 		Handler: Mux(),
 	}
 
+	dBclient, err := db.InitDatabase()
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		if err = dBclient.Disconnect(context.Background()); err != nil {
+			panic(err)
+		}
+	}()
+
 	s := Service{
 		config: cfg,
 		server: &server,
 		//logger: logger,
+		mongoClient: dBclient,
 	}
 
 	return &s, nil
@@ -58,7 +72,7 @@ func (s *Service) Run() error {
 	serverErrors := make(chan error, 1)
 
 	go func() {
-		fmt.Printf("api started - host: %s", s.server.Addr)
+		fmt.Printf("api started - host: http://localhost%s", s.server.Addr)
 		serverErrors <- s.server.ListenAndServe()
 	}()
 

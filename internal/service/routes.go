@@ -10,4 +10,5 @@ func Routes(api *http.ServeMux) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
+	api.Handle("/create", http.HandlerFunc(MongoCrudHandler()))
 }
